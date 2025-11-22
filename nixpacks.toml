@@ -1,19 +1,16 @@
+# Coolify'in projeyi Node.js sanmasını engelliyoruz
+providers = ["python"]
+
 # 1. Kurulum Aşaması
 [phases.setup]
-# Pip'i ayrıca belirtmemiz gerekiyor çünkü NixOS'ta Python ile birlikte gelmiyor.
+# Python ve Pip paket yöneticisini kuruyoruz
 nixPkgs = ["python311", "python311Packages.pip"]
 
 # 2. Yükleme Aşaması
 [phases.install]
-# 'pip' yerine 'python -m pip' kullanmak daha garantidir.
+# Pip komutunu doğrudan çağırmak yerine python modülü olarak çağırıyoruz (daha güvenli)
 cmds = ["python -m pip install -r requirements.txt"]
 
-# 3. Derleme Aşaması (ÖNEMLİ)
-# Coolify projeyi Node sandığı için "npm run build" çalıştırmaya çalışıyor.
-# Bu aşamayı boşaltarak o hatayı engelliyoruz.
-[phases.build]
-cmds =
-
-# 4. Başlatma Aşaması
+# 3. Başlatma Aşaması
 [start]
 cmd = "gunicorn -w 2 -b 0.0.0.0:3000 main:app"
