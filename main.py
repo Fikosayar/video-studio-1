@@ -26,9 +26,7 @@ else:
 def health_check():
     return jsonify({"status": "active"}), 200
 
-# --- İŞTE DÜZELTİLEN SATIR ---
-# methods= olarak dolu olmalı. Boş bırakılamaz.
-@app.route('/chat', methods=)
+@app.route('/chat', methods=['POST'])
 def chat_endpoint():
     if not model:
         return jsonify({"error": "Model yuklenemedi"}), 500
@@ -44,13 +42,5 @@ def chat_endpoint():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # --- DİKKAT (Localhost Ayarı) ---
-    # Kodun içinde burası "0.0.0.0" OLMAK ZORUNDADIR.
-    # Eğer buraya 127.0.0.1 yazarsanız, Docker'ın içinden dışarı seslenemez
-    # ve Coolify "502 Bad Gateway" hatası verir.
-    #
-    # Uygulamayı sadece kendi sunucunuzda (localhost) tutmak için:
-    # Coolify panelinde "Ports Mappings" ayarını "127.0.0.1:3000:3000" yapmanız gerekir.
-    # Kodun içini değiştirmeyin.
     port = int(os.environ.get("PORT", 3000))
     app.run(host='0.0.0.0', port=port)
