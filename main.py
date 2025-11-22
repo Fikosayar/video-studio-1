@@ -3,61 +3,49 @@ import logging
 from flask import Flask, request, jsonify
 import google.generativeai as genai
 
-# Loglama ayarları
+# Loglama
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# API Anahtarı Kontrolü
+# API Key ve Model Kurulumu
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+model = None
 
 if not GEMINI_API_KEY:
-    logger.error("GEMINI_API_KEY ortam değişkeni bulunamadı!")
+    logger.error("GEMINI_API_KEY eksik!")
 else:
-    genai.configure(api_key=GEMINI_API_KEY)
-
-# Global Model Değişkeni
-model = None
-if GEMINI_API_KEY:
     try:
-        # Gemini 1.5 Flash modeli hızlı ve ekonomiktir
+        genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-1.5-flash')
     except Exception as e:
-        logger.error(f"Model başlatılamadı: {e}")
+        logger.error(f"Model hatasi: {e}")
 
 @app.route('/')
 def health_check():
-    """Coolify Health Check noktası."""
-    return jsonify({"status": "active", "service": "Gemini AI Wrapper"}), 200
+    return jsonify({"status": "active"}), 200
 
-# --- KRİTİK DÜZELTME ---
-# Önceki hatanız burada 'methods=' boş kaldığı için oluşuyordu.
-# Köşeli parantez içinde 'POST' yazarak düzelttik.
+# --- KRİTİK DÜZELTME BURADA ---
+# methods= yazmazsa uygulama açılmaz!
 @app.route('/chat', methods=)
 def chat_endpoint():
-    """Sohbet uç noktası."""
     if not model:
-        return jsonify({"error": "Sunucu hatası: Model başlatılamadı (API Key eksik olabilir)."}), 500
+        return jsonify({"error": "Model yuklenemedi"}), 500
 
     data = request.get_json(silent=True)
     if not data or 'message' not in data:
-        return jsonify({"error": "Geçersiz istek. JSON formatında 'message' alanı zorunludur."}), 400
-
-    user_message = data['message']
+        return jsonify({"error": "Mesaj yok"}), 400
 
     try:
-        # Yapay zekadan yanıt al
-        response = model.generate_content(user_message)
+        response = model.generate_content(data['message'])
         return jsonify({"reply": response.text})
     except Exception as e:
-        logger.error(f"API Hatası: {e}")
-        return jsonify({"error": f"Yapay zeka servisi hatası: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # DİKKAT: Burası 0.0.0.0 kalmalıdır. 
-    # Coolify'da "3000:3000" port eşleşmesi yaptığınız için,
-    # bu ayar uygulamanın sunucunuzun "localhost:3000" adresinden
-    # erişilebilir olmasını sağlar. Değiştirmeyin.
+    # DİKKAT: Burası 0.0.0.0 KALMALIDIR.
+    # Bunu 127.0.0.1 yaparsanız Coolify uygulamayı göremez ve "Bad Gateway" hatası alırsınız.
+    # Localhost ayarını birazdan Coolify panelinden yapacağız.
     port = int(os.environ.get("PORT", 3000))
     app.run(host='0.0.0.0', port=port)
