@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template # render_template eklendi
 import google.generativeai as genai
 
 # Loglama
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# API Key ve Model Kurulumu
+# API Key ve Model
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 model = None
 
@@ -22,10 +22,13 @@ else:
     except Exception as e:
         logger.error(f"Model hatasi: {e}")
 
+# --- GÜNCELLENEN KISIM ---
+# Artık sadece JSON değil, HTML arayüzünü döndürüyoruz.
 @app.route('/')
-def health_check():
-    return jsonify({"status": "active"}), 200
+def home():
+    return render_template('index.html')
 
+# API Uç Noktası (Arayüz buraya istek atacak)
 @app.route('/chat', methods=['GET', 'POST'])
 def chat_endpoint():
     if not model:
@@ -42,5 +45,7 @@ def chat_endpoint():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
+    # Localhost ayarını Coolify panelinden (127.0.0.1:3000:3000) yaptığınız için
+    # burası 0.0.0.0 olarak kalmalıdır.
     port = int(os.environ.get("PORT", 3000))
     app.run(host='0.0.0.0', port=port)
