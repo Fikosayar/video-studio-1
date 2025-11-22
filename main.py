@@ -26,7 +26,7 @@ else:
 def health_check():
     return jsonify({"status": "active"}), 200
 
-@app.route('/chat', methods=['POST'])
+@app.route('/chat', methods=['GET', 'POST'])
 def chat_endpoint():
     if not model:
         return jsonify({"error": "Model yuklenemedi"}), 500
