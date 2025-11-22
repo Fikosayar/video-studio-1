@@ -1,24 +1,8 @@
-# Nixpacks Yapılandırma Dosyası
-
-# 1. Aşama: Kurulum (Setup)
-# Python sürümünü 3.11 olarak sabitliyoruz. AI kütüphaneleri güncel Python sever.
 [phases.setup]
 nixPkgs = ["python311"]
 
-# 2. Aşama: Bağımlılıkların Yüklenmesi (Install)
-# requirements.txt dosyasındaki kütüphaneleri pip ile yüklüyoruz.
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
-# 3. Aşama: Derleme (Build)
-# Python yorumlanan bir dil olduğu için derleme aşaması boştur.
-[phases.build]
-cmds =
-
-# 4. Aşama: Başlatma (Start) - EN KRİTİK KISIM
-# Uygulamayı Gunicorn ile başlatıyoruz.
-# -w 2: 2 adet işçi süreci başlatır (CPU çekirdeği başına 1-2 önerilir).
-# -b 0.0.0.0:3000: Uygulamayı tüm ağ arayüzlerinde 3000 portuna bağlar.
-# main:app: 'main.py' dosyasındaki 'app' nesnesini çalıştırır.
 [start]
 cmd = "gunicorn -w 2 -b 0.0.0.0:3000 main:app"
