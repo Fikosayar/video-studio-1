@@ -31,7 +31,7 @@ def health_check():
     """Coolify Health Check noktası."""
     return jsonify({"status": "active", "service": "Gemini AI Wrapper"}), 200
 
-# --- DÜZELTİLEN KISIM BURASI ---
+# --- DÜZELTME: methods= EKLENDİ ---
 @app.route('/chat', methods=)
 def chat_endpoint():
     """Sohbet uç noktası."""
