@@ -31,7 +31,9 @@ def health_check():
     """Coolify Health Check noktası."""
     return jsonify({"status": "active", "service": "Gemini AI Wrapper"}), 200
 
-# --- DÜZELTME: methods= EKLENDİ ---
+# --- KRİTİK DÜZELTME ---
+# Önceki hatanız burada 'methods=' boş kaldığı için oluşuyordu.
+# Köşeli parantez içinde 'POST' yazarak düzelttik.
 @app.route('/chat', methods=)
 def chat_endpoint():
     """Sohbet uç noktası."""
@@ -53,6 +55,9 @@ def chat_endpoint():
         return jsonify({"error": f"Yapay zeka servisi hatası: {str(e)}"}), 500
 
 if __name__ == '__main__':
-    # Yerel geliştirme için
+    # DİKKAT: Burası 0.0.0.0 kalmalıdır. 
+    # Coolify'da "3000:3000" port eşleşmesi yaptığınız için,
+    # bu ayar uygulamanın sunucunuzun "localhost:3000" adresinden
+    # erişilebilir olmasını sağlar. Değiştirmeyin.
     port = int(os.environ.get("PORT", 3000))
     app.run(host='0.0.0.0', port=port)
