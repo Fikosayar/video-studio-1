@@ -1,16 +1,10 @@
-# Coolify'in projeyi Node.js sanmasını engelliyoruz
+# 1. Coolify'a bu projenin Python olduğunu zorluyoruz (Node.js karışıklığını çözer)
 providers = ["python"]
 
-# 1. Kurulum Aşaması
-[phases.setup]
-# Python ve Pip paket yöneticisini kuruyoruz
-nixPkgs = ["python311", "python311Packages.pip"]
+# 2. Python sürümünü belirliyoruz
+[variables]
+NIXPACKS_PYTHON_VERSION = "3.11"
 
-# 2. Yükleme Aşaması
-[phases.install]
-# Pip komutunu doğrudan çağırmak yerine python modülü olarak çağırıyoruz (daha güvenli)
-cmds = ["python -m pip install -r requirements.txt"]
-
-# 3. Başlatma Aşaması
+# 3. Başlatma komutunu veriyoruz
 [start]
 cmd = "gunicorn -w 2 -b 0.0.0.0:3000 main:app"
